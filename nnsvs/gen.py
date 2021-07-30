@@ -151,8 +151,7 @@ def postprocess_duration(labels, pred_durations, lag):
         d_norm[d_norm <= 0] = 1
 
         # TODO: better way to adjust?
-        if d_norm.sum() != d[0]:
-            d_norm[-1] +=  d[0] - d_norm.sum()
+        d_norm[-1] +=  d[0] - d_norm.sum()
         p.set_durations(d_norm)
 
         if len(output_labels) > 0:
