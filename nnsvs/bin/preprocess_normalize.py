@@ -2,7 +2,7 @@
 
 import hydra
 from hydra.utils import to_absolute_path
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import joblib
 from sklearn.preprocessing import StandardScaler
@@ -65,7 +65,7 @@ def apply_normalization_dir2dir(in_dir, out_dir, scaler, inverse, num_workers):
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
-    logger.info(config.pretty())
+    logger.info(OmegaConf.to_yaml(config))
 
     in_dir = to_absolute_path(config.in_dir)
     out_dir = to_absolute_path(config.out_dir)
