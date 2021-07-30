@@ -224,7 +224,7 @@ def train_loop(config, device, model, optimizer, lr_scheduler, data_loaders):
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
-    logger.info(config.pretty())
+    logger.info(OmegaConf.to_yaml(config))
 
     if use_cuda:
         from torch.backends import cudnn
