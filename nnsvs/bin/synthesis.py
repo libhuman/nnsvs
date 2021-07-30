@@ -98,7 +98,7 @@ def synthesis(config, device, label_path, question_path,
     return generated_waveform
 
 
-@hydra.main(config_path="conf/synthesis/config.yaml")
+@hydra.main(config_path="conf/synthesis", config_name="config")
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
