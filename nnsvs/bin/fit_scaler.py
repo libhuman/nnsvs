@@ -2,7 +2,7 @@
 
 import hydra
 from hydra.utils import to_absolute_path
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import joblib
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -14,7 +14,7 @@ logger = None
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
-    logger.info(config.pretty())
+    logger.info(OmegaConf.to_yaml(config))
 
     list_path = to_absolute_path(config.list_path)
     out_path = to_absolute_path(config.out_path)
