@@ -220,7 +220,7 @@ def train_loop(config, device, model, optimizer, lr_scheduler, data_loaders):
     return model
 
 
-@hydra.main(config_path="conf/train/config.yaml")
+@hydra.main(config_path="conf/train", config_name="config")
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
