@@ -19,7 +19,7 @@ from nnsvs.logger import getLogger
 logger = None
 
 
-@hydra.main(config_path="conf/prepare_features/config.yaml")
+@hydra.main(config_path="conf/prepare_features", config_name="config")
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
