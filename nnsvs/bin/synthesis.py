@@ -102,7 +102,7 @@ def synthesis(config, device, label_path, question_path,
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
-    logger.info(config.pretty())
+    logger.info(OmegaConf.to_yaml(config))
 
     if not torch.cuda.is_available():
         device = torch.device("cpu")
