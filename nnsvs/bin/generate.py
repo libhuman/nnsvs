@@ -29,7 +29,7 @@ use_cuda = torch.cuda.is_available()
 def my_app(config : DictConfig) -> None:
     global logger
     logger = getLogger(config.verbose)
-    logger.info(config.pretty())
+    logger.info(OmegaConf.to_yaml(config))
 
     device = torch.device("cuda" if use_cuda else "cpu")
     in_dir = to_absolute_path(config.in_dir)
