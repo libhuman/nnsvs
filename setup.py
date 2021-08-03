@@ -29,7 +29,7 @@ setup(name='nnsvs',
         "librosa >= 0.7.0",
         "pysptk",
         "pyworld",
-        "tensorboard",
+        #"tensorboard",
         "nnmnkwii",
     ],
     extras_require={
