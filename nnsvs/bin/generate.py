@@ -1,12 +1,11 @@
 # coding: utf-8
 
 import hydra
-from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import joblib
 from tqdm import tqdm
-from os.path import basename, splitext, exists, join
+from os.path import basename, splitext, exists, join, abspath
 import os
 import torch
 from torch import nn
@@ -32,17 +31,17 @@ def my_app(config : DictConfig) -> None:
     logger.info(OmegaConf.to_yaml(config))
 
     device = torch.device("cuda" if use_cuda else "cpu")
-    in_dir = to_absolute_path(config.in_dir)
-    out_dir = to_absolute_path(config.out_dir)
+    in_dir = abspath(config.in_dir)
+    out_dir = abspath(config.out_dir)
     os.makedirs(out_dir, exist_ok=True)
 
-    model_config = OmegaConf.load(to_absolute_path(config.model.model_yaml))
+    model_config = OmegaConf.load(abspath(config.model.model_yaml))
     model = hydra.utils.instantiate(model_config.netG).to(device)
-    checkpoint = torch.load(to_absolute_path(config.model.checkpoint),
+    checkpoint = torch.load(abspath(config.model.checkpoint),
         map_location=lambda storage, loc: storage)
     model.load_state_dict(checkpoint["state_dict"])
 
-    scaler = joblib.load(to_absolute_path(config.out_scaler_path))
+    scaler = joblib.load(abspath(config.out_scaler_path))
 
     in_feats = FileSourceDataset(NpyFileSource(in_dir))
 
