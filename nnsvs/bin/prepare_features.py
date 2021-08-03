@@ -1,12 +1,10 @@
 # coding: utf-8
 
 import hydra
-from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
-from os.path import join
 from tqdm import tqdm
-from os.path import basename, splitext, exists
+from os.path import join, abspath, basename, splitext, exists
 import os
 import sys
 
@@ -25,9 +23,9 @@ def my_app(config : DictConfig) -> None:
     logger = getLogger(config.verbose)
     logger.info(OmegaConf.to_yaml(config))
 
-    utt_list = to_absolute_path(config.utt_list)
-    out_dir = to_absolute_path(config.out_dir)
-    question_path_general = to_absolute_path(config.question_path)
+    utt_list = abspath(config.utt_list)
+    out_dir = abspath(config.out_dir)
+    question_path_general = abspath(config.question_path)
 
     # Time-lag model
     # in: musical/linguistic context
@@ -37,13 +35,13 @@ def my_app(config : DictConfig) -> None:
     else:
         question_path = question_path_general
     in_timelag_source = MusicalLinguisticSource(utt_list,
-        to_absolute_path(config.timelag.label_phone_score_dir),
+        abspath(config.timelag.label_phone_score_dir),
         add_frame_features=False, subphone_features=None,
         question_path=question_path,
         log_f0_conditioning=config.log_f0_conditioning)
     out_timelag_source = TimeLagFeatureSource(utt_list,
-        to_absolute_path(config.timelag.label_phone_score_dir),
-        to_absolute_path(config.timelag.label_phone_align_dir))
+        abspath(config.timelag.label_phone_score_dir),
+        abspath(config.timelag.label_phone_align_dir))
 
     in_timelag = FileSourceDataset(in_timelag_source)
     out_timelag = FileSourceDataset(out_timelag_source)
@@ -56,12 +54,12 @@ def my_app(config : DictConfig) -> None:
     else:
         question_path = question_path_general
     in_duration_source = MusicalLinguisticSource(utt_list,
-        to_absolute_path(config.duration.label_dir),
+        abspath(config.duration.label_dir),
         add_frame_features=False, subphone_features=None,
         question_path=question_path,
         log_f0_conditioning=config.log_f0_conditioning)
     out_duration_source = DurationFeatureSource(
-        utt_list, to_absolute_path(config.duration.label_dir))
+        utt_list, abspath(config.duration.label_dir))
 
     in_duration = FileSourceDataset(in_duration_source)
     out_duration = FileSourceDataset(out_duration_source)
@@ -74,11 +72,11 @@ def my_app(config : DictConfig) -> None:
     else:
         question_path = question_path_general
     in_acoustic_source = MusicalLinguisticSource(utt_list,
-        to_absolute_path(config.acoustic.label_dir), question_path,
+        abspath(config.acoustic.label_dir), question_path,
         add_frame_features=True, subphone_features=config.acoustic.subphone_features,
         log_f0_conditioning=config.log_f0_conditioning)
     out_acoustic_source = WORLDAcousticSource(utt_list,
-        to_absolute_path(config.acoustic.wav_dir), to_absolute_path(config.acoustic.label_dir),
+        abspath(config.acoustic.wav_dir), abspath(config.acoustic.label_dir),
         question_path, use_harvest=config.acoustic.use_harvest,
         f0_ceil=config.acoustic.f0_ceil, f0_floor=config.acoustic.f0_floor,
         frame_period=config.acoustic.frame_period, mgc_order=config.acoustic.mgc_order,
