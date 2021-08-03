@@ -1,12 +1,11 @@
 # coding: utf-8
 
 import hydra
-from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 from glob import glob
 from tqdm import tqdm
-from os.path import basename, splitext, exists, join
+from os.path import join, abspath, basename, splitext, exists
 import os
 import shutil
 import torch
@@ -84,8 +83,8 @@ def collate_fn(batch):
 def get_data_loaders(config):
     data_loaders = {}
     for phase in ["train_no_dev", "dev"]:
-        in_dir = to_absolute_path(config.data[phase].in_dir)
-        out_dir = to_absolute_path(config.data[phase].out_dir)
+        in_dir = abspath(config.data[phase].in_dir)
+        out_dir = abspath(config.data[phase].out_dir)
         train = phase.startswith("train")
         in_feats = FileSourceDataset(NpyFileSource(in_dir))
         out_feats = FileSourceDataset(NpyFileSource(out_dir))
@@ -106,7 +105,7 @@ def get_data_loaders(config):
 
 
 def save_checkpoint(config, model, optimizer, lr_scheduler, epoch):
-    out_dir = to_absolute_path(config.train.out_dir)
+    out_dir = abspath(config.train.out_dir)
     os.makedirs(out_dir, exist_ok=True)
     checkpoint_path = join(out_dir, "checkpoint_epoch{:04d}.pth".format(epoch))
     torch.save({
@@ -120,7 +119,7 @@ def save_checkpoint(config, model, optimizer, lr_scheduler, epoch):
 
 
 def save_best_checkpoint(config, model, optimizer, best_loss):
-    out_dir = to_absolute_path(config.train.out_dir)
+    out_dir = abspath(config.train.out_dir)
     os.makedirs(out_dir, exist_ok=True)
     checkpoint_path = join(out_dir, "best_loss.pth")
     torch.save({
@@ -258,7 +257,7 @@ def my_app(config : DictConfig) -> None:
     # Resume
     if config.train.resume.checkpoint is not None and len(config.train.resume.checkpoint) > 0:
         logger.info("Load weights from {}".format(config.train.resume.checkpoint))
-        checkpoint = torch.load(to_absolute_path(config.train.resume.checkpoint))
+        checkpoint = torch.load(abspath(config.train.resume.checkpoint))
         model.load_state_dict(checkpoint["state_dict"])
         if config.train.resume.load_optimizer:
             logger.info("Load optimizer state")
@@ -266,7 +265,7 @@ def my_app(config : DictConfig) -> None:
             lr_scheduler.load_state_dict(checkpoint["lr_scheduler_state"])
 
     # Save model definition
-    out_dir = to_absolute_path(config.train.out_dir)
+    out_dir = abspath(config.train.out_dir)
     os.makedirs(out_dir, exist_ok=True)
     with open(join(out_dir, "model.yaml"), "w") as f:
         OmegaConf.save(config.model, f)
