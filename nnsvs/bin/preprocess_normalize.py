@@ -1,14 +1,13 @@
 # coding: utf-8
 
 import hydra
-from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import joblib
 from sklearn.preprocessing import StandardScaler
 
 import os
-from os.path import join, exists, basename, splitext
+from os.path import join, abspath, exists, basename, splitext
 from multiprocessing import cpu_count
 from tqdm import tqdm
 from nnmnkwii import preprocessing as P
@@ -67,9 +66,9 @@ def my_app(config : DictConfig) -> None:
     logger = getLogger(config.verbose)
     logger.info(OmegaConf.to_yaml(config))
 
-    in_dir = to_absolute_path(config.in_dir)
-    out_dir = to_absolute_path(config.out_dir)
-    scaler_path = to_absolute_path(config.scaler_path)
+    in_dir = abspath(config.in_dir)
+    out_dir = abspath(config.out_dir)
+    scaler_path = abspath(config.scaler_path)
     scaler = joblib.load(scaler_path)
     inverse = config.inverse
     num_workers = config.num_workers
