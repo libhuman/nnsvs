@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import hydra
-from hydra.utils import to_absolute_path
+from os.path import abspath
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
 import joblib
@@ -16,13 +16,13 @@ def my_app(config : DictConfig) -> None:
     logger = getLogger(config.verbose)
     logger.info(OmegaConf.to_yaml(config))
 
-    list_path = to_absolute_path(config.list_path)
-    out_path = to_absolute_path(config.out_path)
+    list_path = abspath(config.list_path)
+    out_path = abspath(config.out_path)
 
     scaler = hydra.utils.instantiate(config.scaler)
     with open(list_path) as f:
         for path in f:
-            c = np.load(to_absolute_path(path.strip()))
+            c = np.load(abspath(path.strip()))
             scaler.partial_fit(c)
         joblib.dump(scaler, out_path)
 
